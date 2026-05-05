@@ -1,0 +1,55 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node:20
+          cache: "npm"
+
+      - name: Install & Test frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node:20
+          cache: "npm"
+
+      - name: Install & Test backend
+        run: |
+          cd backend
+          npm ci
+          npm run build
+    
+  docker-build:
+    needs: [test-frontend, test-backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+      - uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: 
+          docker compose build --no-cache
