@@ -11,6 +11,5 @@ exports.connectDB = async () => {
     console.log("MongoDB Connected Successfully");
   } catch (error) {
     console.log("Unable to connect to mongoDB. Stopping server...");
-    // process.exit(1);
   }
 };
